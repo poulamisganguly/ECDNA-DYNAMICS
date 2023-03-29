@@ -6,6 +6,9 @@ in cancer cells
 1. Clone the repo: 
 	`git clone https://github.com/poulamisganguly/ECDNA-DYNAMICS.git`
 
+2. Switch to the biasedDoubling branch
+	git checkout biasedDoubling
+
 2. Navigate to the `src` directory
 
 3. Run `make`, specifying the path to `g++` if necessary
