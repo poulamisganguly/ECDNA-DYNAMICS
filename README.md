@@ -7,7 +7,7 @@ in cancer cells
 	`git clone https://github.com/poulamisganguly/ECDNA-DYNAMICS.git`
 
 2. Switch to the biasedDoubling branch
-	git checkout biasedDoubling
+	`git checkout biasedDoubling`
 
 2. Navigate to the `src` directory
 
