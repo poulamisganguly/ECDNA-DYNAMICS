@@ -25,16 +25,16 @@ using std::cin;
 
 
 
-int NumCells = 100000;    // Maximum number of cells
+int NumCells = 2;//100000;    // Maximum number of cells
 
 int NumNeutral = 0;      // Initial number of cells with no ecDNA
 
 int amplify = 2;         // factor of ecDNA amplification upon cell division X -> amplify * X
 
 
-double fitness = 3;      // relative fitness of cells with ecDNA ( fitness =1 corresponds to neutral dynamics)
+double fitness = 1;//3;      // relative fitness of cells with ecDNA ( fitness =1 corresponds to neutral dynamics)
 
-int initialcopies = 45; // Initial copies of ecDNA in the first founder cell
+int initialcopies = 1;//45; // Initial copies of ecDNA in the first founder cell
 
 int runs = 20;         // Number of simulation repeats
 
