@@ -25,7 +25,7 @@ using std::cin;
 
 
 
-int NumCells = 2;//100000;    // Maximum number of cells
+int NumCells = 10;//100000;    // Maximum number of cells
 
 int NumNeutral = 0;      // Initial number of cells with no ecDNA
 
@@ -34,16 +34,16 @@ int amplify = 2;         // factor of ecDNA amplification upon cell division X -
 
 double fitness = 1;//3;      // relative fitness of cells with ecDNA ( fitness =1 corresponds to neutral dynamics)
 
-int initialcopies = 45;//45; // Initial copies of ecDNA in the first founder cell
+int initialcopies = 10;//45; // Initial copies of ecDNA in the first founder cell
 
 int runs = 1;//20;         // Number of simulation repeats
 
 
-// Initiate a bunch of vectors to store cell states troughout the simulation
+// Initiate a bunch of vectors to store cell states throughout the simulation
 
-vector <int> Labels (1); // this is a label vector containing the labels of all ecDNA in the cell
+vector <int> Labels; // this is a label vector containing the labels of all ecDNA in the cell
 
-vector <double> State (1,initialcopies);//,Labels);
+vector <double> State (1,initialcopies); // this initializes a vector of size 1, with value=initialcopies
 
 vector < vector <double> > FinalOutput (runs ,vector <double> (NumCells+1,0));
 
@@ -77,7 +77,17 @@ int main()
 {
 
     int count1 = 0;  // Dummy variable to count number of simulation repeats
-
+    
+    // generate as many labels as initial ecDNA copies
+    for (int n=0; n<initialcopies; n++)
+    {
+    	Labels.push_back(n);
+    }
+    //cout << Labels.size() << std::endl;
+    
+    State.insert( State.end(), Labels.begin(), Labels.end() ); // concatenate Labels with State vector
+    //cout << "State size = " << State.size() << std::endl;
+    //print(State);
     
     while (count1 < runs)
     {
@@ -88,15 +98,8 @@ int main()
         
         // Reset some of the vectores of the simulation
         
-        cout << "State size=" << State.size() << "\n";
-        
         State.resize(1);
-        
-        cout << "State size=" << State.size() << "\n";
-        print(State);
-        
         State.at(0)=initialcopies;
-        print(State);
         NumNeutral = 0;
         
         
