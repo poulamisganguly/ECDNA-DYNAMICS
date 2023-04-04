@@ -34,14 +34,16 @@ int amplify = 2;         // factor of ecDNA amplification upon cell division X -
 
 double fitness = 1;//3;      // relative fitness of cells with ecDNA ( fitness =1 corresponds to neutral dynamics)
 
-int initialcopies = 1;//45; // Initial copies of ecDNA in the first founder cell
+int initialcopies = 45;//45; // Initial copies of ecDNA in the first founder cell
 
-int runs = 20;         // Number of simulation repeats
+int runs = 1;//20;         // Number of simulation repeats
 
 
 // Initiate a bunch of vectors to store cell states troughout the simulation
 
-vector <double> State (1,initialcopies);
+vector <int> Labels (1); // this is a label vector containing the labels of all ecDNA in the cell
+
+vector <double> State (1,initialcopies);//,Labels);
 
 vector < vector <double> > FinalOutput (runs ,vector <double> (NumCells+1,0));
 
@@ -65,14 +67,15 @@ std::mt19937 gen(rd());
 
 double exprand( double lambda );
 
+// Define a function to print vectors
 
+void print(vector <double> const &a);
 
 
 
 int main()
 {
-    
-    
+
     int count1 = 0;  // Dummy variable to count number of simulation repeats
 
     
@@ -85,9 +88,17 @@ int main()
         
         // Reset some of the vectores of the simulation
         
+        cout << "State size=" << State.size() << "\n";
+        
         State.resize(1);
+        
+        cout << "State size=" << State.size() << "\n";
+        print(State);
+        
         State.at(0)=initialcopies;
+        print(State);
         NumNeutral = 0;
+        
         
        
         
@@ -270,6 +281,14 @@ double exprand( double lambda)
     return (-log(1.-y)/lambda);
 }
 
+void print(vector <double> const &a) 
+{
+   cout << "The vector elements are : ";
+
+   for(int i=0; i < a.size(); i++)
+   {cout << a.at(i) << ' ';}
+   cout << std::endl;
+}
 
 
 

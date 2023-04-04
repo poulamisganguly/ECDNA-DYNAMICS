@@ -23,4 +23,4 @@ $(ODIR)/%.o: %.cpp $(DEPS)
 .PHONY : clean
 
 clean:
-	rm -f $(ODIR)/*.o ecDNA_evolution
+	rm -f $(ODIR)/*.o *.txt ecDNA_evolution
