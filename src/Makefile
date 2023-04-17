@@ -14,7 +14,7 @@ DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 _OBJ = ecDNA_evolution_2types.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-ecDNA_evolution_2types: $(OBJ)
+ecDNA_evolution_2types.exe: $(OBJ)
 	$(CXX) -o $@ $^ $(CFLAGS) $(LIBS)
 
 $(ODIR)/%.o: %.cpp $(DEPS)
@@ -23,4 +23,4 @@ $(ODIR)/%.o: %.cpp $(DEPS)
 .PHONY : clean
 
 clean:
-	rm -f $(ODIR)/*.o *.txt ecDNA_evolution_2types
+	rm -f $(ODIR)/*.o *.txt ecDNA_evolution_2types.exe
