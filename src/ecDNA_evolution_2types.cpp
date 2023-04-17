@@ -16,14 +16,14 @@ using std::vector;
 using std::cout;
 using std::cin;
 
-int NumCells = 10;//100000;    // Maximum number of cells
+int NumCells = 100000;//100000;    // Maximum number of cells
 int NumNeutral = 0;      // Initial number of cells with no ecDNA
 int amplify = 2;         // factor of ecDNA amplification upon cell division X -> amplify * X
-double fitness = 1;//3;      // relative fitness of cells with ecDNA ( fitness =1 corresponds to neutral dynamics)
-int initialcopies = 10;//45; // Initial copies of ecDNA in the first founder cell
-int initialcopies_a = 3; // Initial copies of type 'a' ecDNA in founder cell (set to nonzero)
+double fitness = 3;//3;      // relative fitness of cells with ecDNA ( fitness =1 corresponds to neutral dynamics)
+int initialcopies = 45;//45; // Initial copies of ecDNA in the first founder cell
+int initialcopies_a = 20; // Initial copies of type 'a' ecDNA in founder cell (set to nonzero)
 int initialcopies_b = initialcopies - initialcopies_a; // Initial copies of type 'b' ecDNA in founder cell
-int runs = 1;//20;         // Number of simulation repeats
+int runs = 20;         // Number of simulation repeats
 // Initiate a bunch of vectors to store cell states throughout the simulation
 vector <double> State_a (1,initialcopies_a); // this initializes a vector of size 1, with value=initialcopies for type 'a'
 vector <double> State_b (1,initialcopies_b); // this initializes a vector of size 1, with value=initialcopies for type 'b'

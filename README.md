@@ -17,8 +17,7 @@
 3. Run `make`, specifying the path to `g++` if necessary
 	`CXX=/path-to-your-compiler/g++ make`
 
-4. You should find an executable file named `ecDNA_evolution` in your 
-current directory 
+4. You should find an executable file named `ecDNA_evolution` in your current directory 
 
 5. Run the executable file
 	`./ecDNA_evolution`
