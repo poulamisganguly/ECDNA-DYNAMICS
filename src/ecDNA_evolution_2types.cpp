@@ -23,6 +23,8 @@ double fitness = 3;//3;      // relative fitness of cells with ecDNA ( fitness =
 int initialcopies = 45;//45; // Initial copies of ecDNA in the first founder cell
 int initialcopies_a = 20; // Initial copies of type 'a' ecDNA in founder cell (set to nonzero)
 int initialcopies_b = initialcopies - initialcopies_a; // Initial copies of type 'b' ecDNA in founder cell
+double fitness_a = 1; // fitness of type 'a' ecDNA, 1 implies neutral dynamics
+double fitness_b = 1; // fitness of type 'b' ecDNA
 int runs = 20;         // Number of simulation repeats
 // Initiate a bunch of vectors to store cell states throughout the simulation
 vector <double> State_a (1,initialcopies_a); // this initializes a vector of size 1, with value=initialcopies for type 'a'
