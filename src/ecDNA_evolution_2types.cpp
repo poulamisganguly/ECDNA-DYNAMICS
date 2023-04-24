@@ -9,6 +9,7 @@
 # include <cstdio>
 # include <vector>
 # include <fstream>
+#include <string>
 #include <math.h>
 #include <algorithm>  
 
@@ -240,8 +241,13 @@ void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int 
     datei.close() ;*/
     
     // This gives the ecDNA copy number of each type for each cell at the end of the simulation (all measures can be constructed from here)
-    datei_a.open ("../tests/NonNeutralSummary_a.txt" ,std::ios::out);
-    datei_b.open ("../tests/NonNeutralSummary_b.txt" ,std::ios::out);
+    std::string baseFileName = "../tests/Summary_";
+    std::string fileNameA = baseFileName + std::to_string((int)fitness) + "_" + std::to_string(initialcopies_a) + "_" +
+    std::to_string(initialcopies_b) + "_a.txt";
+    std::string fileNameB = baseFileName + std::to_string((int)fitness) + "_" + std::to_string(initialcopies_a) + "_" +
+    std::to_string(initialcopies_b) + "_b.txt";
+    datei_a.open (fileNameA ,std::ios::out);
+    datei_b.open (fileNameB ,std::ios::out);
     for ( int i=0 ; i<runs ; i++)
     { 
         if (i!=0)
