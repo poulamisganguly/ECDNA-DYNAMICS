@@ -16,22 +16,17 @@ using std::vector;
 using std::cout;
 using std::cin;
 
-int NumCells = 100000;//100000;    // Maximum number of cells
-int NumNeutral = 0;      // Initial number of cells with no ecDNA
-int amplify = 2;         // factor of ecDNA amplification upon cell division X -> amplify * X
-double fitness = 3;//3;      // relative fitness of cells with ecDNA ( fitness =1 corresponds to neutral dynamics)
-int initialcopies = 45;//45; // Initial copies of ecDNA in the first founder cell
-int initialcopies_a = 20; // Initial copies of type 'a' ecDNA in founder cell (set to nonzero)
-int initialcopies_b = initialcopies - initialcopies_a; // Initial copies of type 'b' ecDNA in founder cell
-double fitness_a = 1; // fitness of type 'a' ecDNA, 1 implies neutral dynamics
-double fitness_b = 1; // fitness of type 'b' ecDNA
-int runs = 20;         // Number of simulation repeats
-// Initiate a bunch of vectors to store cell states throughout the simulation
-vector <double> State_a (1,initialcopies_a); // this initializes a vector of size 1, with value=initialcopies for type 'a'
-vector <double> State_b (1,initialcopies_b); // this initializes a vector of size 1, with value=initialcopies for type 'b'
-vector < vector <double> > FinalOutput_a (runs ,vector <double> (NumCells+1,0)); // final number of ecDNA of type 'a' for each cell
-vector < vector <double> > FinalOutput_b (runs ,vector <double> (NumCells+1,0));
-vector < vector <double> > Neutral (runs ,vector <double> (NumCells,0));
+// int NumCells = 100000;//100000;    // Maximum number of cells
+// int NumNeutral = 0;      // Initial number of cells with no ecDNA
+// int amplify = 2;         // factor of ecDNA amplification upon cell division X -> amplify * X
+// double fitness = 3;//3;      // relative fitness of cells with ecDNA ( fitness =1 corresponds to neutral dynamics)
+// int initialcopies = 45;//45; // Initial copies of ecDNA in the first founder cell
+// int initialcopies_a = 20; // Initial copies of type 'a' ecDNA in founder cell (set to nonzero)
+// int initialcopies_b = initialcopies - initialcopies_a; // Initial copies of type 'b' ecDNA in founder cell
+// double fitness_a = 1; // fitness of type 'a' ecDNA, 1 implies neutral dynamics
+// double fitness_b = 1; // fitness of type 'b' ecDNA
+// int runs = 20;         // Number of simulation repeats
+
 // vector <double> Rate (NumCells ,0); // vector of zeros of size NumCells
 // vector <double> Rate1 (NumCells ,0);
 
@@ -50,9 +45,57 @@ void print(vector <double> const &a);
 // Define a function to calculate total number of cells with ecDNA
 int numCellsWithEcdna(int numCellsWithEcdnaA, int numCellsWithEcdnaB);
 
-int main()
+// Define a function to evolve ecDNA
+void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int initialcopies_a, int initialcopies_b, int runs);
+
+int main(int argc, char* argv[])
 {
-    int count1 = 0;  // Dummy variable to count number of simulation repeats
+    if (argc < 8) { // We expect 8 arguments: the program name, followed by 7 args
+        std::cerr << "Usage: " << argv[0] << " NumCells(int) NumNeutral(int)"<<
+        " amplify(int) fitness(double) initialcopies_a(int) initialcopies_b(int) runs(int)" << std::endl;
+        return 1;
+    }
+    else {
+    	// convert to correct types
+    	int x1 = atoi(argv[1]);
+    	int x2 = atoi(argv[2]);
+    	int x3 = atoi(argv[3]);
+    	double x4 = atof(argv[4]);
+    	int x5 = atoi(argv[5]);
+    	int x6 = atoi(argv[6]);
+    	int x7 = atoi(argv[7]);
+    	
+    	cout << "Running simulations with NumCells="<<x1<<", NumNeutral="<<x2<<", amplify="<<x3<<", fitness="<<x4<<
+    	", initialcopies_a="<<x5<<", initialcopies_b="<<x6<<", runs="<<x7<<"\n";					
+
+    	ecDNAEvolve(x1, x2, x3, x4, x5, x6, x7);
+    	return 0;
+    }
+}     
+
+// Auxiliary functions
+double exprand( double lambda)
+{
+    double y = mtrand1.randExc();
+    return (-log(1.-y)/lambda);
+}
+
+int numCellsWithEcdna(int numCellsWithEcdnaA, int numCellsWithEcdnaB)
+{
+    if (numCellsWithEcdnaA != numCellsWithEcdnaB) return -1;
+    return numCellsWithEcdnaA;
+}
+
+void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int initialcopies_a, int initialcopies_b, int runs)
+{
+   // Initiate a bunch of vectors to store cell states throughout the simulation
+   vector <double> State_a (1,initialcopies_a); // this initializes a vector of size 1, with value=initialcopies for type 'a'
+   vector <double> State_b (1,initialcopies_b); // this initializes a vector of size 1, with value=initialcopies for type 'b'
+   vector < vector <double> > FinalOutput_a (runs ,vector <double> (NumCells+1,0)); // final number of ecDNA of type 'a' for each cell
+   vector < vector <double> > FinalOutput_b (runs ,vector <double> (NumCells+1,0));
+   vector < vector <double> > Neutral (runs ,vector <double> (NumCells,0));
+   
+   int count1 = 0;  // Dummy variable to count number of simulation repeats
     
     while (count1 < runs)
     {
@@ -170,7 +213,7 @@ int main()
         }
         count1++;
     }
-
+    
     std::fstream datei_a ;
     std::fstream datei_b ;
     /*datei.open ("NonNeutral().txt" ,std::ios::out);
@@ -197,8 +240,8 @@ int main()
     datei.close() ;*/
     
     // This gives the ecDNA copy number of each type for each cell at the end of the simulation (all measures can be constructed from here)
-    datei_a.open ("NonNeutralSummary_a.txt" ,std::ios::out);
-    datei_b.open ("NonNeutralSummary_b.txt" ,std::ios::out);
+    datei_a.open ("../tests/NonNeutralSummary_a.txt" ,std::ios::out);
+    datei_b.open ("../tests/NonNeutralSummary_b.txt" ,std::ios::out);
     for ( int i=0 ; i<runs ; i++)
     { 
         if (i!=0)
@@ -215,27 +258,5 @@ int main()
     
     datei_a.close() ;
     datei_b.close() ;
-}     
-
-// Auxiliary functions
-double exprand( double lambda)
-{
-    double y = mtrand1.randExc();
-    return (-log(1.-y)/lambda);
-}
-
-void print(vector <double> const &a) 
-{
-   cout << "The vector elements are : ";
-
-   for(int i=0; i < a.size(); i++)
-   {cout << a.at(i) << ' ';}
-   cout << std::endl;
-}
-
-int numCellsWithEcdna(int numCellsWithEcdnaA, int numCellsWithEcdnaB)
-{
-    if (numCellsWithEcdnaA != numCellsWithEcdnaB) return -1;
-    return numCellsWithEcdnaA;
 }
 
