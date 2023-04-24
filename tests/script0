@@ -1,6 +1,0 @@
-#! /usr/bin/bash
-
-cd ../src
-make clean
-make 
-./ecDNA_evolution
