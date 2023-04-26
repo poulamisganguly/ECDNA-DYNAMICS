@@ -47,6 +47,12 @@ void print(vector <double> const &a);
 // Define a function to calculate total number of cells with ecDNA
 int numCellsWithEcdna(int numCellsWithEcdnaA, int numCellsWithEcdnaB);
 
+// Define a function to count number of nonzero entries in a vector
+int getNonZeroSize (vector <double> v);
+
+// Create a directory for simulation outputs 
+void createOutputDir ();
+
 // Define a function to evolve ecDNA
 void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int initialcopies_a, int initialcopies_b, int runs);
 
@@ -70,7 +76,8 @@ int main(int argc, char* argv[])
     	cout << "Running simulations with NumCells="<<x1<<", NumNeutral="<<x2<<", amplify="<<x3<<", fitness="<<x4<<
     	", initialcopies_a="<<x5<<", initialcopies_b="<<x6<<", runs="<<x7<<"\n";					
 
-    	ecDNAEvolve(x1, x2, x3, x4, x5, x6, x7);
+    	createOutputDir();
+        ecDNAEvolve(x1, x2, x3, x4, x5, x6, x7);
     	return 0;
     }
 }     
@@ -88,6 +95,28 @@ int numCellsWithEcdna(int numCellsWithEcdnaA, int numCellsWithEcdnaB)
     return numCellsWithEcdnaA;
 }
 
+int getNonZeroSize (std::vector<double> v)
+{
+    int nonZeroSize = 0;
+    for (unsigned i=0; i<v.size(); i++) {
+      if (v[i]!=0.0) nonZeroSize++;
+  }
+  return nonZeroSize;
+}
+
+void createOutputDir ()
+{
+
+    std::string outputFolder = "../exps/";
+    const char* path = outputFolder.c_str();
+    boost::filesystem::path dir(path);
+    if(boost::filesystem::create_directory(dir))
+    {
+        std::cerr<< "Directory Created: "<<outputFolder<<std::endl;
+    }
+    
+}
+
 void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int initialcopies_a, int initialcopies_b, int runs)
 {
    // Initiate a bunch of vectors to store cell states throughout the simulation
@@ -96,6 +125,17 @@ void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int 
    vector < vector <double> > FinalOutput_a (runs ,vector <double> (NumCells+1,0)); // final number of ecDNA of type 'a' for each cell
    vector < vector <double> > FinalOutput_b (runs ,vector <double> (NumCells+1,0));
    vector < vector <double> > Neutral (runs ,vector <double> (NumCells,0));
+   double aFrac; // fraction of cells with type-a ecDNA
+   double bFrac; // fraction of cells with type-b ecDNA
+   double nFrac; // fraction of neutral cells
+   double totalN; // total number of cells
+   std::fstream dataFracs; // file to store cell fractions
+   std::string outputFolder = "../exps/";   
+   std::string fractionsBaseFileName = "cellFractions_";
+   std::string fractionsFileName = outputFolder + fractionsBaseFileName + std::to_string((int)fitness) + "_" + std::to_string(initialcopies_a) + "_" +
+    std::to_string(initialcopies_b) + ".txt";
+   dataFracs.open (outputFolder+fractionsFileName ,std::ios::out);
+   //vector < vector <double> > cellFractions (runs, NumCells+1, aFrac, bFrac, nFrac); // how to best store all this stuff???? can vector be more than 1-dimensional?
    
    int count1 = 0;  // Dummy variable to count number of simulation repeats
     
@@ -109,11 +149,24 @@ void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int 
         State_b.resize(1);
         State_b.at(0) = initialcopies_b;
         NumNeutral = 0;
+        
 
         while (count < NumCells)
         {
-            cout << count1 << " " << count << "\n"; // output current state of the simulation
+            // cout << count1 << " " << count << "\n"; // output current state of the simulation
             
+            // Compute fractions of cells with each type of ecDNA
+            
+            totalN = count+1; 
+            aFrac = getNonZeroSize(State_a)/totalN;
+            bFrac = getNonZeroSize(State_b)/totalN;
+            nFrac = NumNeutral/totalN;
+            cout << "N=" << totalN << ", N_a=" << getNonZeroSize(State_a) << ", N_b=" << getNonZeroSize(State_b) << ", N_n=" << NumNeutral << "\n";
+            cout << "f_a=" << aFrac << ", f_b=" << bFrac << ", f_n=" << nFrac << "\n"; 
+
+            // Write fractions to file
+            dataFracs << count1 << " " << totalN << " " << aFrac << " " << bFrac << " " << nFrac << "\n";
+
             // Define a bunch of dummy variables to store intermediate ecDNA copy number and cell fitness            
             double a1 = 0;
             double a2 = 0;
@@ -215,9 +268,12 @@ void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int 
         }
         count1++;
     }
+
+    dataFracs.close();
     
     std::fstream datei_a ;
     std::fstream datei_b ;
+    
     /*datei.open ("NonNeutral().txt" ,std::ios::out);
     for ( int i=0 ; i < State.size() ; i++)
     {		datei << State.at(i) << " " ;}
@@ -242,15 +298,7 @@ void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int 
     datei.close() ;*/
     
     // This gives the ecDNA copy number of each type for each cell at the end of the simulation (all measures can be constructed from here)
-
-    std::string outputFolder = "../exps/";
-    // create folder if it does not exist
-    const char* path = outputFolder.c_str();
-    boost::filesystem::path dir(path);
-    if(boost::filesystem::create_directory(dir))
-    {
-        std::cerr<< "Directory Created: "<<outputFolder<<std::endl;
-    }
+     
     std::string baseFileName = "Summary_";
     std::string fileNameA = outputFolder + baseFileName + std::to_string((int)fitness) + "_" + std::to_string(initialcopies_a) + "_" +
     std::to_string(initialcopies_b) + "_a.txt";
