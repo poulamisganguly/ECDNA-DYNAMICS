@@ -6,7 +6,7 @@ CFLAGS = -std=c++11 -Wall -g -I$(IDIR)
 
 ODIR = obj
 
-LIBS=-lm
+LIBS=-lm -lboost_filesystem -lboost_system
 
 _DEPS = Anfangsverteilung.h MersenneTwister.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))

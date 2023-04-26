@@ -12,6 +12,7 @@
 #include <string>
 #include <math.h>
 #include <algorithm>  
+#include <boost/filesystem.hpp>
 
 using std::vector;
 using std::cout;
@@ -241,10 +242,19 @@ void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int 
     datei.close() ;*/
     
     // This gives the ecDNA copy number of each type for each cell at the end of the simulation (all measures can be constructed from here)
-    std::string baseFileName = "../tests/Summary_";
-    std::string fileNameA = baseFileName + std::to_string((int)fitness) + "_" + std::to_string(initialcopies_a) + "_" +
+
+    std::string outputFolder = "../exps/";
+    // create folder if it does not exist
+    const char* path = outputFolder.c_str();
+    boost::filesystem::path dir(path);
+    if(boost::filesystem::create_directory(dir))
+    {
+        std::cerr<< "Directory Created: "<<outputFolder<<std::endl;
+    }
+    std::string baseFileName = "Summary_";
+    std::string fileNameA = outputFolder + baseFileName + std::to_string((int)fitness) + "_" + std::to_string(initialcopies_a) + "_" +
     std::to_string(initialcopies_b) + "_a.txt";
-    std::string fileNameB = baseFileName + std::to_string((int)fitness) + "_" + std::to_string(initialcopies_a) + "_" +
+    std::string fileNameB = outputFolder + baseFileName + std::to_string((int)fitness) + "_" + std::to_string(initialcopies_a) + "_" +
     std::to_string(initialcopies_b) + "_b.txt";
     datei_a.open (fileNameA ,std::ios::out);
     datei_b.open (fileNameB ,std::ios::out);

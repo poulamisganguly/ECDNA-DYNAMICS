@@ -31,9 +31,6 @@
 *.out
 *.app
 
-# Output text files
-*.txt
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -97,4 +94,7 @@ target/
 
 # Notebook Checkpoints
 .ipynb_checkpoints/
+
+# Folder containing results of numerical experiments
+exps/*
 
