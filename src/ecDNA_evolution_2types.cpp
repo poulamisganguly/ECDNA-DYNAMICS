@@ -51,16 +51,16 @@ int numCellsWithEcdna(int numCellsWithEcdnaA, int numCellsWithEcdnaB);
 int getNonZeroSize (vector <double> v);
 
 // Create a directory for simulation outputs 
-void createOutputDir ();
+void createOutputDir (std::string outputFolder);
 
 // Define a function to evolve ecDNA
-void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int initialcopies_a, int initialcopies_b, int runs);
+void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int initialcopies_a, int initialcopies_b, int runs, std::string outputFolder);
 
 int main(int argc, char* argv[])
 {
-    if (argc < 8) { // We expect 8 arguments: the program name, followed by 7 args
+    if (argc < 9) { // We expect 8 arguments: the program name, followed by 8 args
         std::cerr << "Usage: " << argv[0] << " NumCells(int) NumNeutral(int)"<<
-        " amplify(int) fitness(double) initialcopies_a(int) initialcopies_b(int) runs(int)" << std::endl;
+        " amplify(int) fitness(double) initialcopies_a(int) initialcopies_b(int) runs(int) outputFolder(str)" << std::endl;
         return 1;
     }
     else {
@@ -74,10 +74,10 @@ int main(int argc, char* argv[])
     	int x7 = atoi(argv[7]);
     	
     	cout << "Running simulations with NumCells="<<x1<<", NumNeutral="<<x2<<", amplify="<<x3<<", fitness="<<x4<<
-    	", initialcopies_a="<<x5<<", initialcopies_b="<<x6<<", runs="<<x7<<"\n";					
+    	", initialcopies_a="<<x5<<", initialcopies_b="<<x6<<", runs="<<x7<<", outputFolder="<<argv[8]<<"\n";					
 
-    	createOutputDir();
-        ecDNAEvolve(x1, x2, x3, x4, x5, x6, x7);
+    	createOutputDir(argv[8]);
+        ecDNAEvolve(x1, x2, x3, x4, x5, x6, x7, argv[8]);
     	return 0;
     }
 }     
@@ -104,10 +104,10 @@ int getNonZeroSize (std::vector<double> v)
   return nonZeroSize;
 }
 
-void createOutputDir ()
+void createOutputDir (std::string outputFolder)
 {
 
-    std::string outputFolder = "../exps/";
+    // std::string outputFolder = "../exps/";
     const char* path = outputFolder.c_str();
     boost::filesystem::path dir(path);
     if(boost::filesystem::create_directory(dir))
@@ -117,7 +117,7 @@ void createOutputDir ()
     
 }
 
-void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int initialcopies_a, int initialcopies_b, int runs)
+void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int initialcopies_a, int initialcopies_b, int runs, std::string outputFolder)
 {
    // Initiate a bunch of vectors to store cell states throughout the simulation
    vector <double> State_a (1,initialcopies_a); // this initializes a vector of size 1, with value=initialcopies for type 'a'
@@ -130,7 +130,7 @@ void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int 
    double nFrac; // fraction of neutral cells
    double totalN; // total number of cells
    std::fstream dataFracs; // file to store cell fractions
-   std::string outputFolder = "../exps/";   
+   // std::string outputFolder = "../exps/";   
    std::string fractionsBaseFileName = "cellFractions_";
    std::string fractionsFileName = outputFolder + fractionsBaseFileName + std::to_string((int)fitness) + "_" + std::to_string(initialcopies_a) + "_" +
     std::to_string(initialcopies_b) + ".txt";

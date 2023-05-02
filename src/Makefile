@@ -1,12 +1,12 @@
 ## Adapted from https://www.cs.colby.edu/maxwell/courses/tutorials/maketutor/
 
 IDIR = ../include
-CXX = g++
+CXX = gcc
 CFLAGS = -std=c++11 -Wall -g -I$(IDIR)
 
 ODIR = obj
 
-LIBS=-lm -lboost_filesystem -lboost_system
+LIBS=-lm -lboost_filesystem -lboost_system -lstdc++ 
 
 _DEPS = Anfangsverteilung.h MersenneTwister.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
