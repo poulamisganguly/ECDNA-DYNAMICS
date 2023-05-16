@@ -30,21 +30,30 @@ def plot_cell_fractions(input_dir, output_dir, runs=20):
         data_fracs = np.loadtxt(os.path.join(input_dir, f),
                                 dtype=float)
         data_fracs = np.reshape(data_fracs, [runs,-1,5])
-        
-        
+        fig1, ax1 = plt.subplots()
+        fig2, ax2 = plt.subplots() 
         for d in data_fracs:
-            plt.plot(d[:,1], d[:,2], '--', c='tab:blue', linewidth=0.2)
-            plt.plot(d[:,1], d[:,3], '--', c='tab:orange', linewidth=0.2)
-            plt.plot(d[:,1], d[:,4], '--', c='tab:green', linewidth=0.2)
+            ax1.plot(d[:,1], d[:,2], '--', c='tab:blue', linewidth=0.2)
+            ax1.plot(d[:,1], d[:,3], '--', c='tab:orange', linewidth=0.2)
+            ax1.plot(d[:,1], d[:,4], '--', c='tab:green', linewidth=0.2)
+            ax2.plot(d[:,1], d[:,3]/d[:,2], c='r', linewidth=0.2)
+            ax2.plot(d[:,1], d[:,4]/d[:,2], c='k', linewidth=0.2)
         means = np.mean(data_fracs, axis=0)
-        plt.plot(means[:,1], means[:,2], '-', c='tab:blue', linewidth=2, label='a')
-        plt.plot(means[:,1], means[:,3], '-', c='tab:orange', linewidth=2, label='b')
-        plt.plot(means[:,1], means[:,4], '-', c='tab:green', linewidth=2, label='neutral')
-        plt.legend(loc=1)
-        plt.xscale('log')
+        ax1.plot(means[:,1], means[:,2], '-', c='tab:blue', linewidth=2, label='a')
+        ax1.plot(means[:,1], means[:,3], '-', c='tab:orange', linewidth=2, label='b')
+        ax1.plot(means[:,1], means[:,4], '-', c='tab:green', linewidth=2, label='neutral')
+        ax1.legend(loc=1)
+        ax1.set_xscale('log')
+
+        ax2.plot(means[:,1], means[:,3]/means[:,2], '-', c='r', linewidth=2, label='$N_b$/$N_a$')
+        ax2.plot(means[:,1], means[:,4]/means[:,2], '-', c='k', linewidth=2, label='$N_n$/$N_a$')
+        ax2.legend(loc=1)
+        ax2.set_xscale('log')
         
-        plt.savefig(os.path.join(
+        fig1.savefig(os.path.join(
             output_dir, f.split('.')[0])+'.png')
+        fig2.savefig(os.path.join(
+            output_dir, f.split('.')[0])+'_ratios.png')
         plt.close()
 
         # explicitly clear memory
