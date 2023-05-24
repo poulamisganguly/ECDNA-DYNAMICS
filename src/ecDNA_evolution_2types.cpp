@@ -184,7 +184,7 @@ void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int 
             // negative selection or copy number dependent selection etc.
             
             a1 = exprand( NumNeutral ); // Random number of neutral cell population
-            a2 = fitness * numCellsWithEcdna(State_a.size(), State_b.size()); // fitness times total number of ecDNA
+            a2 = fitness * numCellsWithEcdna(State_a.size(), State_b.size()); // fitness times total number of cells with ecDNA
             a3 = exprand( a2 );         // Random number of ecDNA cell population
             
             Neutral.at(count1).at(count) = NumNeutral ;

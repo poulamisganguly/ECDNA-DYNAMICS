@@ -11,10 +11,10 @@ LIBS=-lm -lboost_filesystem -lboost_system -lstdc++
 _DEPS = Anfangsverteilung.h MersenneTwister.h
 DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ = ecDNA_evolution_2types.o
+_OBJ = ecDNA_evolution_many_types.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-ecDNA_evolution_2types.exe: $(OBJ)
+ecDNA_evolution_many_types.exe: $(OBJ)
 	$(CXX) -o $@ $^ $(CFLAGS) $(LIBS)
 
 $(ODIR)/%.o: %.cpp $(DEPS)
@@ -23,4 +23,4 @@ $(ODIR)/%.o: %.cpp $(DEPS)
 .PHONY : clean
 
 clean:
-	rm -f $(ODIR)/*.o *.txt ecDNA_evolution_2types.exe
+	rm -f $(ODIR)/*.o *.txt ecDNA_evolution_many_types.exe
