@@ -88,19 +88,6 @@ int numCellsWithEcdna(int numCellsWithEcdnaA, int numCellsWithEcdnaB)
     return numCellsWithEcdnaA;
 }
 
-int numCellsWithEcdna(std::vector <std::vector <double> > v)
-{
-    // calculate number of cells with each ecDNA type
-    std::vector <double> numCellsEcdnaType (v.size(), 0);
-    for (int i=0; i<v.size(); i++){
-        numCellsEcdnaType[i] = getNonZeroSize(v[i]);
-    }
-    // get maximum of vector numCellsEcdnaType; this is the number of cells with
-    // any type of ecDNA
-    std::vector<double>::iterator numCellsWithEcdna = std::max_element(numCellsEcdnaType.begin(), numCellsEcdnaType.end());
-    return *numCellsWithEcdna;
-}
-
 int getNonZeroSize (std::vector<double> v)
 {
     int nonZeroSize = 0;
@@ -108,6 +95,21 @@ int getNonZeroSize (std::vector<double> v)
       if (v[i]!=0.0) nonZeroSize++;
   }
   return nonZeroSize;
+}
+
+int numCellsWithEcdna(std::vector <std::vector <double> > v)
+{
+    // calculate sum of all labelled vectors
+    std::vector<double> vSum (v[0].size(),0);
+    for(int i=0; i<v[0].size(); i++)
+    {
+        for(int k=0; k<v.size(); k++)
+        {
+              vSum[i] += v[k][i];
+        }
+    }
+    // calculate number of nonzero entries in sum
+    return getNonZeroSize(vSum);
 }
 
 void createOutputDir (std::string outputFolder)
@@ -344,18 +346,36 @@ void ecDNAEvolveWithLabels(int NumCells, int NumNeutral, int amplify, double fit
         // Reset some of the vectors of the simulation
         State.resize(1);
         State.at(0) = initialcopies;
+        int numEcdnaCells = 1; // initial number of cells with ecDNA
+	// print state
+        cout<<"State = ";
+        for (int i=0; i<State.size(); i++) cout<<State[i]<<" ";
+        cout<<"\n";
         // Label all ecDNA
         vector <vector <double> > stateLabelled = barcodeAll(State);
         int numLabels = stateLabelled.size();
-        // compute number of cells with ecDNA
-        int numEcdnaCells = numCellsWithEcdna(stateLabelled);
+        cout<<"numLabels = "<<numLabels<<"\n";
+        // print labelled state
+        cout<<"stateLabelled = ";
+        for(int j=0; j<stateLabelled.size(); j++)
+        {
+            cout<<"\n";
+            for(int i=0; i<State.size(); i++)
+            {
+                cout<<stateLabelled.at(j).at(i);
+            }
+        }
+        cout<<"\n";
+
         NumNeutral = 0;
-        
 
         while (count < NumCells)
         {
             cout << count1 << " " << count << "\n"; // output current state of the simulation
-
+            
+	    // compute number of cells with ecDNA
+            numEcdnaCells = numCellsWithEcdna(stateLabelled);
+            cout<<"numEcdnaCells = "<<numEcdnaCells<<"\n";
             // Define a bunch of dummy variables to store intermediate ecDNA copy number and cell fitness            
             double a1 = 0;
             double a2 = 0;
@@ -387,7 +407,8 @@ void ecDNAEvolveWithLabels(int NumCells, int NumNeutral, int amplify, double fit
                 if (numEcdnaCells > 0) // check if there are any cells with ecDNA
                 {  
                     // Pick a random cell with ecDNA to proliferate (note! -1)
-            	    s1 = mtrand1.randInt(numEcdnaCells - 1); 
+            	    s1 = mtrand1.randInt(stateLabelled[0].size() - 1); // have to check this! 
+                    cout<<"Cell I'm proliferating is number "<<s1<<"\n";
                 }
                 else
                 {
@@ -464,11 +485,12 @@ void ecDNAEvolveWithLabels(int NumCells, int NumNeutral, int amplify, double fit
     { 
         if (i!=0)
         { 
-            datei << "\n";
+            datei << "\n\n";
         }
-        for ( int j=0 ; j< NumCells ; j++)
+        for ( int k=0 ; k<initialcopies ; k++)
         {   
-            for (int k=0; k<initialcopies; k++)
+            datei << "\n";
+            for (int j=0; j<NumCells; j++)
             {
                 datei << FinalOutput.at(i).at(k).at(j)<< " " ;
             }
