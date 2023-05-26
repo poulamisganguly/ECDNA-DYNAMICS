@@ -134,6 +134,7 @@ void ecDNAEvolve(int NumCells, int NumNeutral, int amplify, double fitness, int 
    std::string fractionsBaseFileName = "cellFractions_";
    std::string fractionsFileName = outputFolder + fractionsBaseFileName + std::to_string((int)fitness) + "_" + std::to_string(initialcopies_a) + "_" +
     std::to_string(initialcopies_b) + ".txt";
+   cout<<"File where cell fractions will be stored: "<<fractionsFileName<<"\n";
    dataFracs.open (outputFolder+fractionsFileName ,std::ios::out);
    //vector < vector <double> > cellFractions (runs, NumCells+1, aFrac, bFrac, nFrac); // how to best store all this stuff???? can vector be more than 1-dimensional?
    

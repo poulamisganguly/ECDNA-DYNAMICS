@@ -96,5 +96,5 @@ target/
 .ipynb_checkpoints/
 
 # Folder containing results of numerical experiments
-exps/*
+exps*/*
 
