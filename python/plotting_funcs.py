@@ -4,7 +4,7 @@ import os
 import gc
 from tqdm import tqdm
 
-def plot_cell_fractions(input_dir, output_dir, runs=20):
+def plot_cell_fractions(input_dir, output_dir, runs):
     """
     Function that plots fractions of cells with each ecDNA type
     
@@ -62,3 +62,14 @@ def plot_cell_fractions(input_dir, output_dir, runs=20):
     
     return None
 
+if __name__ == '__main__':
+        import argparse
+
+        parser = argparse.ArgumentParser(description='Generate plots using cell fraction data')
+        parser.add_argument('--input_dir', required=True,
+                        help='path to simulation results')
+        parser.add_argument('--output_dir', required=True,
+                        help='path to output dir for saving plots')
+        parser.add_argument('--runs', required=True, type=int, default=20, help='number of runs')
+        args = parser.parse_args()
+        plot_cell_fractions(input_dir=args.input_dir, output_dir=args.output_dir, runs=args.runs)

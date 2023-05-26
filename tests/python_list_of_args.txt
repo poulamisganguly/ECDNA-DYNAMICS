@@ -1,0 +1,2 @@
+--input_dir /data/home/ahw899/ECDNA-DYNAMICS/exps/ --output_dir /data/home/ahw899/ECDNA-DYNAMICS/exps/plots/ --runs 20
+--input_dir /data/home/ahw899/ECDNA-DYNAMICS/exps/many_runs/ --output_dir /data/home/ahw899/ECDNA-DYNAMICS/exps/many_runs/plots/ --runs 1000
