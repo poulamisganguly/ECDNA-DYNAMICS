@@ -4,14 +4,15 @@ import os
 import gc
 from tqdm import tqdm
 
-def plot_cell_fractions(input_dir, output_dir, runs):
+def plot_cell_fractions(input_dir, output_dir, runs, only_means):
     """
     Function that plots fractions of cells with each ecDNA type
     
     Arguments:
-    input_dir (str) : path to directory containing output of C++ simulations
-    output_dir (str): path to directory where output plots will be saved
-    runs (int)      : number of simulation runs (default 20)
+    input_dir (str)  : path to directory containing output of C++ simulations
+    output_dir (str) : path to directory where output plots will be saved
+    runs (int)       : number of simulation runs (default 20)
+    only_means (bool): plot only mean trajectory (default True)
     
     Returns:
     The function returns None if run successfully. Saves plots to output_dir
@@ -32,21 +33,22 @@ def plot_cell_fractions(input_dir, output_dir, runs):
         data_fracs = np.reshape(data_fracs, [runs,-1,5])
         fig1, ax1 = plt.subplots()
         fig2, ax2 = plt.subplots() 
-        for d in data_fracs:
-            ax1.plot(d[:,1], d[:,2], '--', c='tab:blue', linewidth=0.2)
-            ax1.plot(d[:,1], d[:,3], '--', c='tab:orange', linewidth=0.2)
-            ax1.plot(d[:,1], d[:,4], '--', c='tab:green', linewidth=0.2)
-            ax2.plot(d[:,1], d[:,3]/d[:,2], c='r', linewidth=0.2)
-            ax2.plot(d[:,1], d[:,4]/d[:,2], c='k', linewidth=0.2)
-        means = np.mean(data_fracs, axis=0)
-        ax1.plot(means[:,1], means[:,2], '-', c='tab:blue', linewidth=2, label='a')
-        ax1.plot(means[:,1], means[:,3], '-', c='tab:orange', linewidth=2, label='b')
-        ax1.plot(means[:,1], means[:,4], '-', c='tab:green', linewidth=2, label='neutral')
+        if not only_means:
+            for d in data_fracs:
+                ax1.plot(d[:,1], d[:,2], '--', c='tab:blue', linewidth=0.2)
+                ax1.plot(d[:,1], d[:,3], '--', c='tab:orange', linewidth=0.2)
+                ax1.plot(d[:,1], d[:,4], '--', c='tab:green', linewidth=0.2)
+                ax2.plot(d[:,1], d[:,3]/d[:,2], c='r', linewidth=0.2)
+                ax2.plot(d[:,1], d[:,4]/d[:,2], c='k', linewidth=0.2)
+        means = np.mean(data_fracs[:,:,2:], axis=0) # first 2 cols are run number and population size, and must not be averaged
+        ax1.plot(data_fracs[0][:,1], means[:,0], '.', c='tab:blue', linewidth=2, label='a')
+        ax1.plot(data_fracs[0][:,1], means[:,1], '.', c='tab:orange', linewidth=2, label='b')
+        ax1.plot(data_fracs[0][:,1], means[:,2], '.', c='tab:green', linewidth=2, label='neutral')
         ax1.legend(loc=1)
         ax1.set_xscale('log')
 
-        ax2.plot(means[:,1], means[:,3]/means[:,2], '-', c='r', linewidth=2, label='$N_b$/$N_a$')
-        ax2.plot(means[:,1], means[:,4]/means[:,2], '-', c='k', linewidth=2, label='$N_n$/$N_a$')
+        ax2.plot(data_fracs[0][:,1], means[:,1]/means[:,0], '-', c='r', linewidth=2, label='$N_b$/$N_a$')
+        ax2.plot(data_fracs[0][:,1], means[:,2]/means[:,0], '-', c='k', linewidth=2, label='$N_n$/$N_a$')
         ax2.legend(loc=1)
         ax2.set_xscale('log')
         
@@ -70,6 +72,7 @@ if __name__ == '__main__':
                         help='path to simulation results')
         parser.add_argument('--output_dir', required=True,
                         help='path to output dir for saving plots')
-        parser.add_argument('--runs', required=True, type=int, default=20, help='number of runs')
+        parser.add_argument('--runs', required=False, type=int, default=20, help='number of runs')
+        parser.add_argument('--only_means', required=False, type=bool, default=True, help='only plot mean trajectories')
         args = parser.parse_args()
-        plot_cell_fractions(input_dir=args.input_dir, output_dir=args.output_dir, runs=args.runs)
+        plot_cell_fractions(input_dir=args.input_dir, output_dir=args.output_dir, runs=args.runs, only_means=args.only_means)
