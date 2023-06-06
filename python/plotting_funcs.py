@@ -41,9 +41,9 @@ def plot_cell_fractions(input_dir, output_dir, runs, only_means):
                 ax2.plot(d[:,1], d[:,3]/d[:,2], c='r', linewidth=0.2)
                 ax2.plot(d[:,1], d[:,4]/d[:,2], c='k', linewidth=0.2)
         means = np.mean(data_fracs[:,:,2:], axis=0) # first 2 cols are run number and population size, and must not be averaged
-        ax1.plot(data_fracs[0][:,1], means[:,0], '.', c='tab:blue', linewidth=2, label='a')
-        ax1.plot(data_fracs[0][:,1], means[:,1], '.', c='tab:orange', linewidth=2, label='b')
-        ax1.plot(data_fracs[0][:,1], means[:,2], '.', c='tab:green', linewidth=2, label='neutral')
+        ax1.plot(data_fracs[0][:,1], means[:,0], '-', c='tab:blue', linewidth=2, label='a')
+        ax1.plot(data_fracs[0][:,1], means[:,1], '-', c='tab:orange', linewidth=2, label='b')
+        ax1.plot(data_fracs[0][:,1], means[:,2], '-', c='tab:green', linewidth=2, label='neutral')
         ax1.legend(loc=1)
         ax1.set_xscale('log')
 
@@ -52,10 +52,16 @@ def plot_cell_fractions(input_dir, output_dir, runs, only_means):
         ax2.legend(loc=1)
         ax2.set_xscale('log')
         
-        fig1.savefig(os.path.join(
-            output_dir, f.split('.')[0])+'.png')
-        fig2.savefig(os.path.join(
-            output_dir, f.split('.')[0])+'_ratios.png')
+        if only_means:
+            fig1.savefig(os.path.join(
+                output_dir, f.split('.')[0])+'_means.png')
+            fig2.savefig(os.path.join(
+                output_dir, f.split('.')[0])+'_ratios_means.png')
+        else:
+            fig1.savefig(os.path.join(
+                output_dir, f.split('.')[0])+'.png')
+            fig2.savefig(os.path.join(
+                output_dir, f.split('.')[0])+'_ratios.png')
         plt.close()
 
         # explicitly clear memory
