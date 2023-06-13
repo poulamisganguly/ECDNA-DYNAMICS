@@ -32,7 +32,6 @@ double exprand( double lambda );
 void print(vector <double> const &a);
 
 // Define a function to calculate total number of cells with ecDNA
-int numCellsWithEcdna(int numCellsWithEcdnaA, int numCellsWithEcdnaB);
 int numCellsWithEcdna(std::vector <std::vector <double> > v);
 
 // Define a function to count number of nonzero entries in a vector
@@ -80,12 +79,6 @@ double exprand( double lambda)
 {
     double y = mtrand1.randExc();
     return (-log(1.-y)/lambda);
-}
-
-int numCellsWithEcdna(int numCellsWithEcdnaA, int numCellsWithEcdnaB)
-{
-    if (numCellsWithEcdnaA != numCellsWithEcdnaB) return -1;
-    return numCellsWithEcdnaA;
 }
 
 int getNonZeroSize (std::vector<double> v)
@@ -137,13 +130,13 @@ vector < vector <double> > barcodeAll (vector <double> v)
     // cout<<"Total number of labels = "<<T<<"\n";
 
     // initialize vector of vectors for labelled data
-    vector< vector<double> > vLabelled (numLabels, vector<double> (numCells,0));
+    vector< vector<double> > vLabelled (numLabels, vector<double>(numCells,0));
     // for(int k=0; k<numLabels; k++) {
-        // cout<<"v["<<k<<"] = ";
-        // for(int i=0; i<numCells; i++){
-        //     cout<<vLabelled[k][i]<<" ";
-        // }
-        // cout<<"\n";
+    //     cout<<"v["<<k<<"] = ";
+    //     for(int i=0; i<numCells; i++){
+    //         cout<<vLabelled[k][i]<<" ";
+    //     }
+    //     cout<<"\n";
     // }
 
     // do labelling for i=0
@@ -346,7 +339,7 @@ void ecDNAEvolveWithLabels(int NumCells, int NumNeutral, int amplify, double fit
         // Reset some of the vectors of the simulation
         State.resize(1);
         State.at(0) = initialcopies;
-        int numEcdnaCells = 1; // initial number of cells with ecDNA
+        // int numEcdnaCells = 1; // initial number of cells with ecDNA
 	// print state
         cout<<"State = ";
         for (int i=0; i<State.size(); i++) cout<<State[i]<<" ";
@@ -371,10 +364,10 @@ void ecDNAEvolveWithLabels(int NumCells, int NumNeutral, int amplify, double fit
 
         while (count < NumCells)
         {
-            cout << count1 << " " << count << "\n"; // output current state of the simulation
+            // cout << count1 << " " << count << "\n"; // output current state of the simulation
             
 	    // compute number of cells with ecDNA
-            numEcdnaCells = numCellsWithEcdna(stateLabelled);
+            int numEcdnaCells = numCellsWithEcdna(stateLabelled);
             cout<<"numEcdnaCells = "<<numEcdnaCells<<"\n";
             // Define a bunch of dummy variables to store intermediate ecDNA copy number and cell fitness            
             double a1 = 0;
@@ -419,43 +412,66 @@ void ecDNAEvolveWithLabels(int NumCells, int NumNeutral, int amplify, double fit
                 for (int k=0; k<numLabels; k++)
                 {
                     c4[k] = amplify*stateLabelled[k].at(s1); // double ecDNA copies of each type in the mother cell
+                    cout<<"c4["<<k<<"]="<<c4[k]<<"\n";
                     // Random binomial trials to distribute the ecDNA copies into daughter cells
                     std::binomial_distribution<> d(c4[k], 0.5); // does this give independent distributions each time?
                     s2[k] = d(gen);
                     s3[k] = stateLabelled[k].at(s1); // number of ecDNA of each type in cell s1
+                    cout<<"s2["<<k<<"]="<<s2[k]<<", s3["<<k<<"]="<<s3[k]<<"\n";
                 }
    
                 // Below is just a few statements to make sure to count all possible cases of daughter cells correctly
 
                 // check if all s2's are zero; this would mean that one daughter cell is neutral
-		if (std::all_of(s2.begin(), s2.end(), [](int i) { return i==0; }) == 0)
+		if (std::all_of(s2.begin(), s2.end(), [](int i) { return i==0; }) == 1)
                 {
+                    cout<<"All s2's are zero; one daughter cell is neutral\n";
                     NumNeutral++;
-                    for (int k=0; k<numLabels; k++) stateLabelled[k].at(s1) = amplify*s3[k];
+                    for (int k=0; k<numLabels; k++)
+                    { 
+                        stateLabelled[k].at(s1) = amplify*s3[k];
+                    }
                 }
                 
                 else
                 {   
-		    for (int k=0; k<numLabels; k++) stateLabelled[k].at(s1) = s2[k];
+		    for (int k=0; k<numLabels; k++)
+                    {
+                        stateLabelled[k].at(s1) = s2[k];
+                    } 
                     // check if the other daughter cell is neutral. note that in the following condition we assume
                     // that the amplification factor is the same for all ecDNA types
                     if (amplify*std::accumulate(s3.begin(), s3.end(), 0) == std::accumulate(s2.begin(), s2.end(), 0))
                     {
+                        cout<<"Sum of s2's is equal to total ecDNA in parent; one daughter cell is neutral\n";
                         NumNeutral++;
                     }
                     else // neither daughter cell is neutral
                     {
+                        cout<<"Neither daughter cell is neutral\n";
                         vector <double> c3 (numLabels, 0);
                         for (int k=0; k<numLabels; k++) 
                         {
                             c3[k] = amplify*s3[k] - s2[k];
+                            cout<<"c3["<<k<<"]="<<c3[k]<<"\n";
                             stateLabelled[k].push_back(c3[k]);
                         }
                     }
                 }
             }
             count++;
+            // print labelled state
+            cout<<"stateLabelled = \n";
+            for(int j=0; j<stateLabelled.size(); j++)
+            {
+                for(int i=0; i<stateLabelled[0].size(); i++)
+                {   
+                    cout<<stateLabelled.at(j).at(i)<<" ";
+                }
+                cout<<"\n";
+            }
         }
+        int numEcdnaCells = numCellsWithEcdna(stateLabelled);
         for (int i=0; i<numEcdnaCells; i++)
         {
             for (int k=0; k<numLabels; k++)
