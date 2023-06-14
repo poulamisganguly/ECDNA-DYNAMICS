@@ -12,4 +12,4 @@ module load boost
 module load gcc
 make -C /data/home/ahw899/ECDNA-DYNAMICS/src clean
 make -C /data/home/ahw899/ECDNA-DYNAMICS/src
-/data/home/ahw899/ECDNA-DYNAMICS/src/ecDNA_evolution_2types.exe $INPUT_ARGS
+/data/home/ahw899/ECDNA-DYNAMICS/src/ecDNA_evolution_many_types.exe $INPUT_ARGS
